@@ -21,7 +21,7 @@ public static class PageParser
         
         using (var driver = new ChromeDriver(options))
         {
-            for (int i = 1; i < numberOfPages + 1; i++)
+            for (int i = 1; i <= numberOfPages; i++)
             {
                 lock (LockObject)
                 {

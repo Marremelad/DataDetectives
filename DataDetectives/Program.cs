@@ -41,7 +41,7 @@ class Program
         {
             List<Thread> pageParsers = new List<Thread>();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Thread thread = new Thread(() => PageParser.ParsePage(numberOfPages));
                 pageParsers.Add(thread);
@@ -64,11 +64,11 @@ class Program
                 var button = htmlDoc.DocumentNode.SelectSingleNode("//button[contains(@aria-label, 'Current Page')]");
                 if (button != null)
                 {
-                    Console.WriteLine($"Page {button.InnerText.Trim()}");
+                    Console.WriteLine($"Page {button.InnerText.Trim()}.");
                 }
                 else
                 {
-                    Console.WriteLine("Didn't find button.");
+                    Console.WriteLine("Page number not found.");
                 }
 
 
@@ -103,7 +103,7 @@ class Program
                         var actorNode = listItem.SelectSingleNode(".//span[contains(@class, 'v-card') and contains(@class, 'text--primary') and contains(@class, 'myh-body-2')]");
                         if (actorNode != null)
                         {
-                            Console.WriteLine("Aktör: " + actorNode.InnerText.Trim());
+                            Console.WriteLine("Aktör: " + actorNode.InnerText.Trim() + "\n");
                         }
                         else
                         {
@@ -116,7 +116,7 @@ class Program
                     Console.WriteLine("Inga listobjekt hittades.");
                 }
 
-                Console.WriteLine("\n\n\n");
+                Console.WriteLine("-----------------------------------\n\n");
             }
         }
         catch (Exception ex)
@@ -125,6 +125,7 @@ class Program
         }
 
         sw.Stop();
-        Console.WriteLine($"tid för att skrapa 10 sidor: {sw.ElapsedMilliseconds} ms.");
+        Console.WriteLine($"Time elapsed attempting to scrape {numberOfPages} pages: {sw.ElapsedMilliseconds} ms.");
+        Console.WriteLine($"Pages scraped: {PageParser.Pages.Count}.\n");
     }
 }
