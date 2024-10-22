@@ -17,12 +17,36 @@ class Program
         {
             Thread pageParser1 = new Thread(PageParser.ParsePage);
             Thread pageParser2 = new Thread(PageParser.ParsePage);
+            Thread pageParser3 = new Thread(PageParser.ParsePage);
+            Thread pageParser4 = new Thread(PageParser.ParsePage);
+            Thread pageParser5 = new Thread(PageParser.ParsePage);
+            Thread pageParser6 = new Thread(PageParser.ParsePage);
+            Thread pageParser7 = new Thread(PageParser.ParsePage);
+            Thread pageParser8 = new Thread(PageParser.ParsePage);
+            Thread pageParser9 = new Thread(PageParser.ParsePage);
+            Thread pageParser10 = new Thread(PageParser.ParsePage);
             
             pageParser1.Start();
             pageParser2.Start();
+            pageParser3.Start();
+            pageParser4.Start();
+            pageParser5.Start();
+            pageParser6.Start();
+            pageParser7.Start();
+            pageParser8.Start();
+            pageParser9.Start();
+            pageParser10.Start();
 
             pageParser1.Join();
             pageParser2.Join();
+            pageParser3.Join();
+            pageParser4.Join();
+            pageParser5.Join();
+            pageParser6.Join();
+            pageParser7.Join();
+            pageParser8.Join();
+            pageParser9.Join();
+            pageParser10.Join();
 
             var pages = PageParser.Pages;
             var htmlDoc = new HtmlDocument();
