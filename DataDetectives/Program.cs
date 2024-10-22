@@ -1,4 +1,6 @@
-﻿namespace DataDetectives;
+﻿using System.Diagnostics;
+
+namespace DataDetectives;
 using System;
 using HtmlAgilityPack;
 using OpenQA.Selenium;
@@ -9,6 +11,8 @@ class Program
 {
     static void Main(string[] args)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+        Stopwatch.StartNew();
         try
         {
             Thread pageParser1 = new Thread(PageParser.ParsePage);
@@ -28,6 +32,17 @@ class Program
                 htmlDoc.LoadHtml(page);
 
                 // Extrahera information från varje listobjekt (<a>-element)
+                var button = htmlDoc.DocumentNode.SelectSingleNode("//button[contains(@aria-label, 'Current Page')]");
+                if (button != null)
+                {
+                    Console.WriteLine($"Page {button.InnerText.Trim()}");
+                }
+                else
+                {
+                    Console.WriteLine("Didn't find button.");
+                }
+
+
                 var listItemNodes = htmlDoc.DocumentNode.SelectNodes("//a[contains(@class, 'v-list-item') and contains(@class, 'v-list-item--link')]");
                 if (listItemNodes != null)
                 {
@@ -79,5 +94,8 @@ class Program
         {
             Console.WriteLine("Ett fel inträffade: " + ex.Message);
         }
+
+        sw.Stop();
+        Console.WriteLine($"tid för att skrapa 10 sidor: {sw.ElapsedMilliseconds} ms.");
     }
 }
