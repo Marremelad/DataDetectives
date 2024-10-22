@@ -5,41 +5,27 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
-using System;
-using HtmlAgilityPack;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
-
 class Program
 {
     static void Main(string[] args)
     {
-        string url = "https://www.myh.se/om-oss/sok-handlingar-i-vart-diarium?katalog=Tillsynsbeslut%20yrkesh%C3%B6gskoleutbildning";
-
         try
         {
-            // Starta en ny Chrome-webbläsare i "headless" läge
-            var options = new ChromeOptions();
-            options.AddArgument("--headless"); // Kör utan att visa webbläsarens UI
-            options.AddArgument("--no-sandbox");
-            options.AddArgument("--disable-dev-shm-usage");
+            Thread pageParser1 = new Thread(PageParser.ParsePage);
+            Thread pageParser2 = new Thread(PageParser.ParsePage);
+            
+            pageParser1.Start();
+            pageParser2.Start();
 
-            using (var driver = new ChromeDriver(options))
+            pageParser1.Join();
+            pageParser2.Join();
+
+            var pages = PageParser.Pages;
+            var htmlDoc = new HtmlDocument();
+            
+            foreach (var page in pages)
             {
-                // Navigera till webbsidan
-                driver.Navigate().GoToUrl(url);
-
-                // Vänta tills elementet vi behöver är tillgängligt
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-                wait.Until(d => d.FindElement(By.CssSelector("a.v-list-item")));
-
-                // Hämta HTML-innehållet efter att JavaScript genererat sidan
-                var htmlContent = driver.PageSource;
-
-                // Ladda HTML-koden i HtmlDocument från HtmlAgilityPack
-                var htmlDoc = new HtmlDocument();
-                htmlDoc.LoadHtml(htmlContent);
+                htmlDoc.LoadHtml(page);
 
                 // Extrahera information från varje listobjekt (<a>-element)
                 var listItemNodes = htmlDoc.DocumentNode.SelectNodes("//a[contains(@class, 'v-list-item') and contains(@class, 'v-list-item--link')]");
@@ -85,6 +71,8 @@ class Program
                 {
                     Console.WriteLine("Inga listobjekt hittades.");
                 }
+
+                Console.WriteLine("\n\n\n");
             }
         }
         catch (Exception ex)
