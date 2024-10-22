@@ -13,6 +13,7 @@ class Program
     {
         Stopwatch sw = Stopwatch.StartNew();
         Stopwatch.StartNew();
+
         try
         {
             Thread pageParser1 = new Thread(PageParser.ParsePage);
@@ -25,6 +26,7 @@ class Program
             Thread pageParser8 = new Thread(PageParser.ParsePage);
             Thread pageParser9 = new Thread(PageParser.ParsePage);
             Thread pageParser10 = new Thread(PageParser.ParsePage);
+            
             
             pageParser1.Start();
             pageParser2.Start();
