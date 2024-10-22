@@ -45,7 +45,6 @@ class Program
         }).ToList();
         
         Helper.DisplayPages(sortedPages);
-
         
         Console.WriteLine($"Time elapsed attempting to scrape {numberOfPages} pages: {sw.ElapsedMilliseconds} ms.");
         Console.WriteLine($"Pages scraped: {PageParser.Pages.Count}.\n");
