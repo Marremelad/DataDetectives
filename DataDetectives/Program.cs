@@ -1,4 +1,4 @@
-﻿gsnamespace DataDetectives;
+﻿namespace DataDetectives;
 
 class Program
 {
