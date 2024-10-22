@@ -1,4 +1,6 @@
-﻿namespace DataDetectives;
+﻿using System.Diagnostics;
+
+namespace DataDetectives;
 using System;
 using HtmlAgilityPack;
 using OpenQA.Selenium;
@@ -9,6 +11,8 @@ class Program
 {
     static void Main(string[] args)
     {
+        Stopwatch sw = Stopwatch.StartNew();
+        Stopwatch.StartNew();
         try
         {
             Thread pageParser1 = new Thread(PageParser.ParsePage);
@@ -79,5 +83,8 @@ class Program
         {
             Console.WriteLine("Ett fel inträffade: " + ex.Message);
         }
+
+        sw.Stop();
+        Console.WriteLine($"tid för att skrapa 10 sidor: {sw.ElapsedMilliseconds} ms.");
     }
 }
