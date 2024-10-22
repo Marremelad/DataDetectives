@@ -13,13 +13,21 @@ class Program
 
         try
         {
+
+            List<Task> tasks =
+            [
+                new Task(PageParserAsync.ParsePageAsync),
+                new Task(PageParserAsync.ParsePageAsync),
+                new Task(PageParserAsync.ParsePageAsync),
+                new Task(PageParserAsync.ParsePageAsync),
+                new Task(PageParserAsync.ParsePageAsync),
+                new Task(PageParserAsync.ParsePageAsync),
+                new Task(PageParserAsync.ParsePageAsync),
+                new Task(PageParserAsync.ParsePageAsync),
+                new Task(PageParserAsync.ParsePageAsync),
+                new Task(PageParserAsync.ParsePageAsync)
+            ];
             
-            List<Task> tasks = new List<Task>(); 
-            for (int i = 1; i < 11; i++)
-            {
-                var page = i;
-                tasks.Add(Task.Run(() => PageParserAsync.ParsePageAsync(page)));
-            }
 
             // Wait for both tasks to finish.
             await Task.WhenAll(tasks);
