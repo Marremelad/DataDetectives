@@ -13,12 +13,16 @@ class Program
 
         try
         {
-            // Start the page parsers asynchronously.
-            Task task1 = Task.Run(() => PageParserAsync.ParsePageAsync());
-            Task task2 = Task.Run(() => PageParserAsync.ParsePageAsync());
+            
+            List<Task> tasks = new List<Task>(); 
+            for (int i = 1; i < 11; i++)
+            {
+                var page = i;
+                tasks.Add(Task.Run(() => PageParserAsync.ParsePageAsync(page)));
+            }
 
             // Wait for both tasks to finish.
-            await Task.WhenAll(task1, task2);
+            await Task.WhenAll(tasks);
 
             var pages = PageParserAsync.Pages;
             var htmlDoc = new HtmlDocument();
