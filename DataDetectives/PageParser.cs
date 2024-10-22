@@ -14,10 +14,8 @@ public static class PageParser
 
     public static void ParsePage()
     {
-        // string url = $"https://www.myh.se/om-oss/sok-handlingar-i-vart-diarium?katalog=Tillsynsbeslut%20yrkesh%C3%B6gskoleutbildning&p={i}";
-        // Starta en ny Chrome-webbläsare i "headless" läge
         var options = new ChromeOptions();
-        options.AddArgument("--headless"); // Kör utan att visa webbläsarens UI
+        options.AddArgument("--headless");
         options.AddArgument("--no-sandbox");
         options.AddArgument("--disable-dev-shm-usage");
         
@@ -31,14 +29,11 @@ public static class PageParser
                 }
                 
                 string url = $"https://www.myh.se/om-oss/sok-handlingar-i-vart-diarium?katalog=Tillsynsbeslut%20yrkesh%C3%B6gskoleutbildning&p={i}";
-                // Navigera till webbsidan
                 driver.Navigate().GoToUrl(url);
-
-                // Vänta tills elementet vi behöver är tillgängligt
+                
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
                 wait.Until(d => d.FindElement(By.CssSelector("a.v-list-item")));
-
-                // Hämta HTML-innehållet efter att JavaScript genererat sidan
+                
                 var htmlContent = driver.PageSource;
 
                 lock (LockObject)
