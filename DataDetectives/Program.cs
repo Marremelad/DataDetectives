@@ -3,35 +3,31 @@
 namespace DataDetectives;
 using System;
 using HtmlAgilityPack;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
+
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         Stopwatch sw = Stopwatch.StartNew();
-        Stopwatch.StartNew();
+
         try
         {
-            Thread pageParser1 = new Thread(PageParser.ParsePage);
-            Thread pageParser2 = new Thread(PageParser.ParsePage);
-            
-            pageParser1.Start();
-            pageParser2.Start();
+            // Start the page parsers asynchronously.
+            Task task1 = Task.Run(() => PageParserAsync.ParsePageAsync());
+            Task task2 = Task.Run(() => PageParserAsync.ParsePageAsync());
 
-            pageParser1.Join();
-            pageParser2.Join();
+            // Wait for both tasks to finish.
+            await Task.WhenAll(task1, task2);
 
-            var pages = PageParser.Pages;
+            var pages = PageParserAsync.Pages;
             var htmlDoc = new HtmlDocument();
             
             foreach (var page in pages)
             {
                 htmlDoc.LoadHtml(page);
 
-                // Extrahera information från varje listobjekt (<a>-element)
+                // Extract button info.
                 var button = htmlDoc.DocumentNode.SelectSingleNode("//button[contains(@aria-label, 'Current Page')]");
                 if (button != null)
                 {
@@ -42,13 +38,13 @@ class Program
                     Console.WriteLine("Didn't find button.");
                 }
 
-
+                // Extract list item info.
                 var listItemNodes = htmlDoc.DocumentNode.SelectNodes("//a[contains(@class, 'v-list-item') and contains(@class, 'v-list-item--link')]");
                 if (listItemNodes != null)
                 {
                     foreach (var listItem in listItemNodes)
                     {
-                        // Extrahera diarienummer
+                        // Extract diary number.
                         var diaryNumberNode = listItem.SelectSingleNode(".//div[contains(@class, 'v-list-item__subtitle') and contains(@class, 'letter-space-2')]");
                         if (diaryNumberNode != null)
                         {
@@ -59,7 +55,7 @@ class Program
                             Console.WriteLine("Inget diarienummer hittades.");
                         }
 
-                        // Extrahera granskningsinformation
+                        // Extract review information.
                         var reviewNode = listItem.SelectSingleNode(".//div[contains(@class, 'v-list-item__title') and contains(@class, 'myh-h3')]");
                         if (reviewNode != null)
                         {
@@ -70,7 +66,7 @@ class Program
                             Console.WriteLine("Ingen granskningsinformation hittades.");
                         }
 
-                        // Extrahera aktörsnamn
+                        // Extract actor name.
                         var actorNode = listItem.SelectSingleNode(".//span[contains(@class, 'v-card') and contains(@class, 'text--primary') and contains(@class, 'myh-body-2')]");
                         if (actorNode != null)
                         {

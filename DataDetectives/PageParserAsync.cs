@@ -5,7 +5,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
-public static class PageParser
+public static class PageParserAsync
 {
     public static HashSet<int> SearchedNumbers = new HashSet<int>();
     public static List<string> Pages = new List<string>();
