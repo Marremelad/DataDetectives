@@ -40,7 +40,6 @@ class Program
         try
         {
             List<Thread> pageParsers = new List<Thread>();
-
             for (int i = 0; i < 8; i++)
             {
                 Thread thread = new Thread(() => PageParser.ParsePage(numberOfPages));
@@ -53,10 +52,17 @@ class Program
                 thread.Join();
             }
             
-            var pages = PageParser.Pages;
-            var htmlDoc = new HtmlDocument();
+            var sortedPages = PageParser.Pages.OrderBy(pageHtml =>
+            {
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(pageHtml);
+                
+                var pageButton = htmlDoc.DocumentNode.SelectSingleNode("//button[@aria-current='true']");
+                return pageButton != null ? int.Parse(pageButton.InnerText.Trim()) : 0;
+            }).ToList();
             
-            foreach (var page in pages)
+            var htmlDoc = new HtmlDocument();
+            foreach (var page in sortedPages)
             {
                 htmlDoc.LoadHtml(page);
 
