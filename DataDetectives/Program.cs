@@ -1,10 +1,13 @@
 ﻿using System.Diagnostics;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.DevTools.V127.HeapProfiler;
 
 namespace DataDetectives;
 using System;
 using HtmlAgilityPack;
-using ChromeDriver
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 
 
 class Program
@@ -38,20 +41,11 @@ class Program
 
         try
         {
-
-            List<Task> tasks =
-            [
-                Task.Run(PageParserAsync.ParsePageAsync),
-                Task.Run(PageParserAsync.ParsePageAsync),
-                Task.Run(PageParserAsync.ParsePageAsync),
-                Task.Run(PageParserAsync.ParsePageAsync),
-                Task.Run(PageParserAsync.ParsePageAsync),
-                Task.Run(PageParserAsync.ParsePageAsync),
-                Task.Run(PageParserAsync.ParsePageAsync),
-                Task.Run(PageParserAsync.ParsePageAsync),
-                Task.Run(PageParserAsync.ParsePageAsync),
-                Task.Run(PageParserAsync.ParsePageAsync),
-            ];
+            List<Task> tasks = new List<Task>();
+            for (int i = 0; i < 10; i++)
+            {
+                tasks.Add(PageParserAsync.ParsePageAsync(numberOfPages));
+            }
             
             // Wait for both tasks to finish.
             await Task.WhenAll(tasks);
@@ -129,5 +123,7 @@ class Program
 
         sw.Stop();
         Console.WriteLine($"tid för att skrapa: {sw.ElapsedMilliseconds} ms.");
+
+        Console.WriteLine(PageParserAsync.Pages.Count);
     }
 }
