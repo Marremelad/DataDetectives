@@ -16,19 +16,18 @@ class Program
 
             List<Task> tasks =
             [
-                new Task(PageParserAsync.ParsePageAsync),
-                new Task(PageParserAsync.ParsePageAsync),
-                new Task(PageParserAsync.ParsePageAsync),
-                new Task(PageParserAsync.ParsePageAsync),
-                new Task(PageParserAsync.ParsePageAsync),
-                new Task(PageParserAsync.ParsePageAsync),
-                new Task(PageParserAsync.ParsePageAsync),
-                new Task(PageParserAsync.ParsePageAsync),
-                new Task(PageParserAsync.ParsePageAsync),
-                new Task(PageParserAsync.ParsePageAsync)
+                Task.Run(PageParserAsync.ParsePageAsync),
+                Task.Run(PageParserAsync.ParsePageAsync),
+                Task.Run(PageParserAsync.ParsePageAsync),
+                Task.Run(PageParserAsync.ParsePageAsync),
+                Task.Run(PageParserAsync.ParsePageAsync),
+                Task.Run(PageParserAsync.ParsePageAsync),
+                Task.Run(PageParserAsync.ParsePageAsync),
+                Task.Run(PageParserAsync.ParsePageAsync),
+                Task.Run(PageParserAsync.ParsePageAsync),
+                Task.Run(PageParserAsync.ParsePageAsync),
             ];
             
-
             // Wait for both tasks to finish.
             await Task.WhenAll(tasks);
 
@@ -104,6 +103,6 @@ class Program
         }
 
         sw.Stop();
-        Console.WriteLine($"tid för att skrapa 10 sidor: {sw.ElapsedMilliseconds} ms.");
+        Console.WriteLine($"tid för att skrapa: {sw.ElapsedMilliseconds} ms.");
     }
 }

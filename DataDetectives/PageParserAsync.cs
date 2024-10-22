@@ -7,7 +7,8 @@ using OpenQA.Selenium.Support.UI;
 
 public static class PageParserAsync
 {
-    public static List<string> Pages = new List<string>();
+    private static readonly HashSet<int> ScrapedPages = new HashSet<int>(); 
+    public static readonly List<string> Pages = new List<string>();
     private static readonly object LockObject = new object();
 
     public static async void ParsePageAsync()
@@ -17,49 +18,51 @@ public static class PageParserAsync
         options.AddArgument("--no-sandbox");
         options.AddArgument("--disable-dev-shm-usage");
 
-        var htmlContent1 = "";
+        var htmlContent = "";
         using (var driver = new ChromeDriver(options))
         {
             string url = $"https://www.myh.se/om-oss/sok-handlingar-i-vart-diarium?katalog=Tillsynsbeslut%20yrkesh%C3%B6gskoleutbildning";
-            driver.Navigate().GoToUrl(url);
+            await driver.Navigate().GoToUrlAsync(url);
 
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
             wait.Until(d => d.FindElement(By.CssSelector("a.v-list-item")));
 
-            htmlContent1 = driver.PageSource;
+            htmlContent = driver.PageSource;
         }
 
         var htmlDoc1 = new HtmlDocument();
-        htmlDoc1.LoadHtml(htmlContent1);
+        htmlDoc1.LoadHtml(htmlContent);
 
         var buttons = htmlDoc1.DocumentNode.SelectNodes("//button[contains(@aria-label, 'Goto Page')]");
-        int numberOfPages = int.Parse(buttons[buttons.Count - 1].InnerText.Trim());
+        int numberOfPages = int.Parse(buttons[^1].InnerText.Trim());
 
         await Task.Run(() =>
         {
-            for (int i = 1; i < numberOfPages; i++)
+            
+            using (var driver = new ChromeDriver(options))
             {
-                using (var driver = new ChromeDriver(options))
+                for (int i = 1; i < numberOfPages - 1; i++)
                 {
-                    string url = $"https://www.myh.se/om-oss/sok-handlingar-i-vart-diarium?katalog=Tillsynsbeslut%20yrkesh%C3%B6gskoleutbildning&p={page}";
+                    lock (LockObject)
+                    {
+                        if (!ScrapedPages.Add(i)) continue;
+                    }
+                    
+                    string url = $"https://www.myh.se/om-oss/sok-handlingar-i-vart-diarium?katalog=Tillsynsbeslut%20yrkesh%C3%B6gskoleutbildning&p={i}";
                     driver.Navigate().GoToUrl(url);
 
                     var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
                     wait.Until(d => d.FindElement(By.CssSelector("a.v-list-item")));
 
-                    var htmlContent = driver.PageSource;
-
+                    var htmlFromPage = driver.PageSource;
+                    
                     lock (LockObject)
                     {
-                        Pages.Add(htmlContent);
+                        Pages.Add(htmlFromPage);
                     }
                 }
             }
+            
         });
     }
 }
-
-
-
-
-// &p=1
