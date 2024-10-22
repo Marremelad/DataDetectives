@@ -10,7 +10,7 @@ public static class PageParserAsync
     public static List<string> Pages = new List<string>();
     private static readonly object LockObject = new object();
 
-    public static async Task ParsePageAsync(int page)
+    public static async void ParsePageAsync()
     {
         var options = new ChromeOptions();
         options.AddArgument("--headless");
@@ -19,19 +19,22 @@ public static class PageParserAsync
 
         await Task.Run(() =>
         {
-            using (var driver = new ChromeDriver(options))
+            for (int i = 1; i < numberOfPages; i++)
             {
-                string url = $"https://www.myh.se/om-oss/sok-handlingar-i-vart-diarium?katalog=Tillsynsbeslut%20yrkesh%C3%B6gskoleutbildning&p={page}";
-                driver.Navigate().GoToUrl(url);
-
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-                wait.Until(d => d.FindElement(By.CssSelector("a.v-list-item")));
-
-                var htmlContent = driver.PageSource;
-
-                lock (LockObject)
+                using (var driver = new ChromeDriver(options))
                 {
-                    Pages.Add(htmlContent);
+                    string url = $"https://www.myh.se/om-oss/sok-handlingar-i-vart-diarium?katalog=Tillsynsbeslut%20yrkesh%C3%B6gskoleutbildning&p={page}";
+                    driver.Navigate().GoToUrl(url);
+
+                    var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+                    wait.Until(d => d.FindElement(By.CssSelector("a.v-list-item")));
+
+                    var htmlContent = driver.PageSource;
+
+                    lock (LockObject)
+                    {
+                        Pages.Add(htmlContent);
+                    }
                 }
             }
         });
