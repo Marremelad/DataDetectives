@@ -9,7 +9,6 @@ public static class Helper
 {
     public static int GetNumberOfPages()
     {
-        int numberOfPages = 0;
         try
         {
             var options = new ChromeOptions();
@@ -34,14 +33,13 @@ public static class Helper
 
             var buttons = htmlDoc1.DocumentNode.SelectNodes("//button[contains(@aria-label, 'Goto Page')]");
         
-            numberOfPages = int.Parse(buttons[^1].InnerText.Trim());
+            return int.Parse(buttons[^1].InnerText.Trim());
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Something went wrong: {ex}");
+            return 0;
         }
-
-        return numberOfPages;
     }
     
     public static void DisplayPages(List<string> pages)
