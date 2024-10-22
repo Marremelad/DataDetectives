@@ -32,6 +32,17 @@ class Program
                 htmlDoc.LoadHtml(page);
 
                 // Extrahera information från varje listobjekt (<a>-element)
+                var button = htmlDoc.DocumentNode.SelectSingleNode("//button[contains(@aria-label, 'Current Page')]");
+                if (button != null)
+                {
+                    Console.WriteLine($"Page {button.InnerText.Trim()}");
+                }
+                else
+                {
+                    Console.WriteLine("Didn't find button.");
+                }
+
+
                 var listItemNodes = htmlDoc.DocumentNode.SelectNodes("//a[contains(@class, 'v-list-item') and contains(@class, 'v-list-item--link')]");
                 if (listItemNodes != null)
                 {
