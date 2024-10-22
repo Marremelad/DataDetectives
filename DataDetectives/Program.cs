@@ -13,43 +13,46 @@ class Program
     {
         Stopwatch sw = Stopwatch.StartNew();
         Stopwatch.StartNew();
+        
+        var options = new ChromeOptions();
+        options.AddArgument("--headless");
+        options.AddArgument("--no-sandbox");
+        options.AddArgument("--disable-dev-shm-usage");
+        
+        var htmlContent1 = "";
+        using (var driver = new ChromeDriver(options))
+        {
+            string url = $"https://www.myh.se/om-oss/sok-handlingar-i-vart-diarium?katalog=Tillsynsbeslut%20yrkesh%C3%B6gskoleutbildning";
+            driver.Navigate().GoToUrl(url);
+
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+            wait.Until(d => d.FindElement(By.CssSelector("a.v-list-item")));
+
+            htmlContent1 = driver.PageSource;
+        }
+
+        var htmlDoc1 = new HtmlDocument();
+        htmlDoc1.LoadHtml(htmlContent1);
+
+        var buttons = htmlDoc1.DocumentNode.SelectNodes("//button[contains(@aria-label, 'Goto Page')]");
+        int numberOfPages = int.Parse(buttons[^1].InnerText.Trim());
 
         try
         {
-            Thread pageParser1 = new Thread(PageParser.ParsePage);
-            Thread pageParser2 = new Thread(PageParser.ParsePage);
-            Thread pageParser3 = new Thread(PageParser.ParsePage);
-            Thread pageParser4 = new Thread(PageParser.ParsePage);
-            Thread pageParser5 = new Thread(PageParser.ParsePage);
-            Thread pageParser6 = new Thread(PageParser.ParsePage);
-            Thread pageParser7 = new Thread(PageParser.ParsePage);
-            Thread pageParser8 = new Thread(PageParser.ParsePage);
-            Thread pageParser9 = new Thread(PageParser.ParsePage);
-            Thread pageParser10 = new Thread(PageParser.ParsePage);
-            
-            
-            pageParser1.Start();
-            pageParser2.Start();
-            pageParser3.Start();
-            pageParser4.Start();
-            pageParser5.Start();
-            pageParser6.Start();
-            pageParser7.Start();
-            pageParser8.Start();
-            pageParser9.Start();
-            pageParser10.Start();
+            List<Thread> pageParsers = new List<Thread>();
 
-            pageParser1.Join();
-            pageParser2.Join();
-            pageParser3.Join();
-            pageParser4.Join();
-            pageParser5.Join();
-            pageParser6.Join();
-            pageParser7.Join();
-            pageParser8.Join();
-            pageParser9.Join();
-            pageParser10.Join();
-
+            for (int i = 0; i < 10; i++)
+            {
+                Thread thread = new Thread(() => PageParser.ParsePage(numberOfPages));
+                pageParsers.Add(thread);
+                thread.Start();
+            }
+            
+            foreach (Thread thread in pageParsers)
+            {
+                thread.Join();
+            }
+            
             var pages = PageParser.Pages;
             var htmlDoc = new HtmlDocument();
             
